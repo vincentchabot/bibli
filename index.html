@@ -152,19 +152,86 @@
       });
     }
     async function loadCatalogue() {
+      countElement.textContent = 'Chargement du catalogue…';
+      catalogueElement.replaceChildren();
+
+      function showError(title, detail, suggestion) {
+        countElement.textContent = title;
+        const box = document.createElement('div');
+        box.className = 'empty';
+        const heading = document.createElement('strong');
+        heading.textContent = title;
+        const text = document.createElement('p');
+        text.textContent = detail;
+        box.append(heading, text);
+        if (suggestion) {
+          const help = document.createElement('p');
+          help.textContent = suggestion;
+          box.appendChild(help);
+        }
+        catalogueElement.appendChild(box);
+      }
+
+      // fetch() ne peut pas charger catalogue.json depuis un fichier file://.
+      if (window.location.protocol === 'file:') {
+        showError(
+          'Le site est ouvert directement depuis un fichier.',
+          'Le navigateur bloque le chargement de catalogue.json en mode file:// (restriction de sécurité).',
+          'Ouvrez le site via GitHub Pages, ou lancez un serveur local dans le dossier avec : python3 -m http.server 8000, puis allez sur http://localhost:8000.'
+        );
+        return;
+      }
+
+
       try {
         const response = await fetch('./catalogue.json', { cache: 'no-store' });
-        if (!response.ok) throw new Error('Fichier catalogue.json introuvable');
-        packs = await response.json();
-        if (!Array.isArray(packs)) throw new Error('Le catalogue doit être une liste JSON');
+        if (!response.ok) {
+          if (response.status === 404) {
+            showError(
+              'catalogue.json est introuvable (HTTP 404).',
+              'Le serveur ne trouve pas le fichier catalogue.json à côté de index.html.',
+              'Vérifiez le nom du fichier, son emplacement dans le dépôt GitHub et que les modifications ont bien été publiées.'
+            );
+          } else {
+            showError(
+              `Erreur HTTP ${response.status} lors du chargement du catalogue.`,
+              `Le serveur a répondu avec le code ${response.status} (${response.statusText || 'erreur HTTP'}).`,
+              'Réessayez dans quelques instants.'
+            );
+          }
+          return;
+        }
+
+        const raw = await response.text();
+        try {
+          packs = JSON.parse(raw);
+        } catch (jsonError) {
+          showError(
+            'catalogue.json existe, mais son JSON est invalide.',
+            jsonError.message,
+            'Vérifiez notamment les virgules, les guillemets et les crochets dans catalogue.json.'
+          );
+          return;
+        }
+
+        if (!Array.isArray(packs)) {
+          showError(
+            'Le format du catalogue est incorrect.',
+            'catalogue.json doit contenir une liste JSON (un tableau entre crochets [ ]).',
+            'Chaque pack doit être un objet de cette liste.'
+          );
+          return;
+        }
+
         addOptions(ageSelect, unique(packs.map(p => p.age)));
         addOptions(themeSelect, unique(packs.flatMap(p => p.themes || [])));
         render();
       } catch (error) {
-        countElement.textContent = 'Le catalogue n’a pas pu être chargé.';
-        const msg = document.createElement('div'); msg.className = 'empty';
-        msg.textContent = 'Vérifiez que le fichier catalogue.json est bien présent à côté de index.html.';
-        catalogueElement.appendChild(msg);
+        showError(
+          'Impossible de joindre catalogue.json.',
+          error.message || 'Une erreur réseau est survenue.',
+          'Vérifiez votre connexion Internet et que le site est correctement publié.'
+        );
       }
     }
     searchInput.addEventListener('input', render);
