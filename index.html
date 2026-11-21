@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Catalogue partagé de packs d'histoires.">
+  <title>Bibliothèque</title>
+  <style>
+    :root { color-scheme: light; --ink:#243047; --muted:#65718a; --paper:#f6f7fb; --card:#fff; --line:#e3e7ef; --accent:#5368b8; --accent-dark:#3f5199; --soft:#edf0fc; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    .wrap { width:min(1060px,calc(100% - 32px)); margin:0 auto; }
+    header { padding:38px 0 26px; background:linear-gradient(135deg,#eef1ff,#f8f8fc); border-bottom:1px solid var(--line); }
+    .eyebrow { color:var(--accent-dark); font-weight:700; font-size:.8rem; letter-spacing:.09em; text-transform:uppercase; }
+    h1 { margin:7px 0 8px; font-size:clamp(2rem,5vw,3rem); line-height:1.1; }
+    .intro { max-width:680px; margin:0; color:var(--muted); }
+    main { padding:26px 0 54px; }
+    .toolbar { display:grid; grid-template-columns:minmax(200px,1fr) 190px 190px auto; gap:10px; align-items:center; margin-bottom:18px; }
+    input,select,textarea { width:100%; border:1px solid var(--line); border-radius:10px; background:white; color:var(--ink); padding:11px 12px; font:inherit; }
+    input:focus,select:focus,textarea:focus { outline:3px solid #dfe4ff; border-color:var(--accent); }
+    button,.button { border:0; border-radius:10px; padding:11px 15px; background:var(--accent); color:#fff; font:600 .95rem system-ui,sans-serif; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:7px; }
+    button:hover,.button:hover { background:var(--accent-dark); }
+    .button.secondary { color:var(--accent-dark); background:var(--soft); }
+    .count { color:var(--muted); font-size:.9rem; margin:10px 0 14px; }
+    .grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+    .pack { background:var(--card); border:1px solid var(--line); border-radius:15px; padding:18px; display:flex; flex-direction:column; min-height:210px; box-shadow:0 2px 8px #23304a08; }
+    .pack-top { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
+    .pack h2 { margin:0 0 5px; font-size:1.15rem; line-height:1.3; }
+    .meta { color:var(--muted); font-size:.88rem; }
+    .description { color:#46526a; margin:13px 0; white-space:pre-wrap; }
+    .tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:auto; padding:4px 0 15px; }
+    .tag { font-size:.78rem; color:#46538e; background:var(--soft); border-radius:99px; padding:4px 9px; }
+    .download { align-self:flex-start; margin-top:4px; }
+    .empty { background:#fff; border:1px dashed #cbd2e2; border-radius:14px; padding:30px 20px; text-align:center; color:var(--muted); grid-column:1/-1; }
+    .howto { margin-top:24px; color:var(--muted); font-size:.9rem; }
+    details.add { margin-top:28px; background:#fff; border:1px solid var(--line); border-radius:14px; padding:16px 18px; }
+    details.add summary { cursor:pointer; font-weight:700; color:var(--accent-dark); }
+    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px; }
+    .field.full { grid-column:1/-1; }
+    label { display:block; font-size:.88rem; font-weight:650; margin:0 0 5px; }
+    .hint { color:var(--muted); font-size:.82rem; margin:5px 0 0; }
+    .form-actions { display:flex; gap:9px; flex-wrap:wrap; margin-top:14px; }
+    #result { margin-top:14px; }
+    #result textarea { min-height:125px; font: .83rem/1.45 ui-monospace,SFMono-Regular,Consolas,monospace; }
+    .notice { padding:12px 14px; border-radius:10px; background:#fff8e8; color:#76551a; font-size:.88rem; margin-top:14px; }
+    footer { border-top:1px solid var(--line); padding:18px 0 28px; color:var(--muted); font-size:.82rem; }
+    @media (max-width:760px) { .toolbar { grid-template-columns:1fr 1fr; } .toolbar input { grid-column:1/-1; } .grid { grid-template-columns:1fr; } }
+    @media (max-width:480px) { .toolbar,.form-grid { grid-template-columns:1fr; } .field.full { grid-column:auto; } header { padding-top:28px; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="eyebrow">Bibliothèque collective</div>
+      <h1>📚 Les histoires de la bande</h1>
+      <p class="intro">Un catalogue partagé de packs à télécharger. Choisissez un pack, ouvrez son lien Proton Drive et récupérez le fichier.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="toolbar" aria-label="Recherche et filtres">
+      <input id="search" type="search" placeholder="Rechercher un titre, un auteur, un thème…" aria-label="Rechercher">
+      <select id="age"><option value="">Tous les âges</option></select>
+      <select id="theme"><option value="">Tous les thèmes</option></select>
+      <button class="secondary" id="reset" type="button">Réinitialiser</button>
+    </section>
+    <p class="count" id="count">Chargement du catalogue…</p>
+    <section class="grid" id="catalogue" aria-live="polite"></section>
+
+    <p class="howto">Pour ajouter un pack : déposez le fichier dans le dossier partagé Proton Drive, créez un lien de partage en lecture, puis transmettez le lien et les informations du pack à la personne qui met à jour le catalogue.</p>
+
+    <details class="add">
+      <summary>＋ Préparer une fiche pour proposer un pack</summary>
+      <p class="hint">Ce formulaire prépare une fiche à copier et à envoyer à la personne qui gère le catalogue. Il ne publie rien automatiquement.</p>
+      <form id="pack-form">
+        <div class="form-grid">
+          <div class="field"><label for="title">Titre du pack *</label><input id="title" required maxlength="100" placeholder="Ex. Les aventures de…"></div>
+          <div class="field"><label for="author">Ajouté par *</label><input id="author" required maxlength="60" placeholder="Prénom ou pseudo"></div>
+          <div class="field"><label for="age-input">Âge conseillé</label><input id="age-input" maxlength="30" placeholder="Ex. 5–8 ans"></div>
+          <div class="field"><label for="themes">Thèmes</label><input id="themes" maxlength="120" placeholder="Ex. aventure, animaux, espace"></div>
+          <div class="field full"><label for="description">Description</label><textarea id="description" rows="3" maxlength="400" placeholder="Quelques mots sur les histoires du pack…"></textarea></div>
+          <div class="field full"><label for="link">Lien de téléchargement Proton *</label><input id="link" type="url" required placeholder="https://drive.proton.me/…"></div>
+        </div>
+        <div class="form-actions"><button type="submit">Préparer la fiche</button></div>
+      </form>
+      <div id="result" hidden>
+        <p><strong>Fiche à transmettre :</strong></p>
+        <textarea id="json-output" readonly aria-label="Fiche au format JSON"></textarea>
+        <div class="form-actions"><button type="button" id="copy">Copier la fiche</button></div>
+      </div>
+    </details>
+    <div class="notice"><strong>À savoir :</strong> le site GitHub Pages est public. N'y placez pas d'informations personnelles. Toute personne ayant accès au catalogue pourra voir les liens Proton qui y sont publiés. Vous pouvez protéger les liens Proton par mot de passe et partager ce mot de passe séparément avec vos amis.</div>
+  </main>
+
+  <footer><div class="wrap">Bibliothèque d'histoires entre amis · Les fichiers sont hébergés séparément sur Proton Drive.</div></footer>
+
+  <script>
+    const catalogueElement = document.getElementById('catalogue');
+    const countElement = document.getElementById('count');
+    const searchInput = document.getElementById('search');
+    const ageSelect = document.getElementById('age');
+    const themeSelect = document.getElementById('theme');
+    let packs = [];
+
+    function normalise(value) {
+      return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    }
+    function unique(values) {
+      return [...new Set(values.filter(Boolean))].sort((a,b) => a.localeCompare(b, 'fr'));
+    }
+    function addOptions(select, values) {
+      values.forEach(value => {
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = value;
+        select.appendChild(option);
+      });
+    }
+    function render() {
+      const q = normalise(searchInput.value.trim());
+      const age = ageSelect.value;
+      const theme = themeSelect.value;
+      const visible = packs.filter(pack => {
+        const haystack = normalise([pack.title, pack.author, pack.description, pack.age, ...(pack.themes || [])].join(' '));
+        return (!q || haystack.includes(q)) && (!age || pack.age === age) && (!theme || (pack.themes || []).includes(theme));
+      });
+      countElement.textContent = `${visible.length} pack${visible.length > 1 ? 's' : ''}`;
+      catalogueElement.replaceChildren();
+      if (!visible.length) {
+        const empty = document.createElement('div');
+        empty.className = 'empty';
+        empty.textContent = packs.length ? 'Aucun pack ne correspond à votre recherche.' : 'La bibliothèque est encore vide. Le premier pack n’attend que vous !';
+        catalogueElement.appendChild(empty);
+        return;
+      }
+      visible.forEach(pack => {
+        const card = document.createElement('article');
+        card.className = 'pack';
+        const top = document.createElement('div'); top.className = 'pack-top';
+        const heading = document.createElement('div');
+        const title = document.createElement('h2'); title.textContent = pack.title;
+        const meta = document.createElement('div'); meta.className = 'meta';
+        meta.textContent = [pack.author ? `Par ${pack.author}` : '', pack.age || ''].filter(Boolean).join(' · ');
+        heading.append(title, meta); top.appendChild(heading); card.appendChild(top);
+        if (pack.description) { const desc = document.createElement('p'); desc.className = 'description'; desc.textContent = pack.description; card.appendChild(desc); }
+        const tags = document.createElement('div'); tags.className = 'tags';
+        (pack.themes || []).forEach(themeName => { const tag = document.createElement('span'); tag.className = 'tag'; tag.textContent = themeName; tags.appendChild(tag); });
+        card.appendChild(tags);
+        const link = document.createElement('a'); link.className = 'button download'; link.href = pack.link; link.target = '_blank'; link.rel = 'noopener noreferrer'; link.textContent = 'Ouvrir le pack sur Proton ↗';
+        card.appendChild(link);
+        catalogueElement.appendChild(card);
+      });
+    }
+    async function loadCatalogue() {
+      try {
+        const response = await fetch('./catalogue.json', { cache: 'no-store' });
+        if (!response.ok) throw new Error('Fichier catalogue.json introuvable');
+        packs = await response.json();
+        if (!Array.isArray(packs)) throw new Error('Le catalogue doit être une liste JSON');
+        addOptions(ageSelect, unique(packs.map(p => p.age)));
+        addOptions(themeSelect, unique(packs.flatMap(p => p.themes || [])));
+        render();
+      } catch (error) {
+        countElement.textContent = 'Le catalogue n’a pas pu être chargé.';
+        const msg = document.createElement('div'); msg.className = 'empty';
+        msg.textContent = 'Vérifiez que le fichier catalogue.json est bien présent à côté de index.html.';
+        catalogueElement.appendChild(msg);
+      }
+    }
+    searchInput.addEventListener('input', render);
+    ageSelect.addEventListener('change', render);
+    themeSelect.addEventListener('change', render);
+    document.getElementById('reset').addEventListener('click', () => { searchInput.value=''; ageSelect.value=''; themeSelect.value=''; render(); });
+
+    document.getElementById('pack-form').addEventListener('submit', event => {
+      event.preventDefault();
+      const themes = document.getElementById('themes').value.split(',').map(s => s.trim()).filter(Boolean);
+      const entry = {
+        title: document.getElementById('title').value.trim(),
+        author: document.getElementById('author').value.trim(),
+        age: document.getElementById('age-input').value.trim(),
+        themes,
+        description: document.getElementById('description').value.trim(),
+        link: document.getElementById('link').value.trim()
+      };
+      document.getElementById('json-output').value = JSON.stringify(entry, null, 2);
+      document.getElementById('result').hidden = false;
+    });
+    document.getElementById('copy').addEventListener('click', async () => {
+      const output = document.getElementById('json-output');
+      try { await navigator.clipboard.writeText(output.value); document.getElementById('copy').textContent = 'Copié !'; }
+      catch { output.focus(); output.select(); document.getElementById('copy').textContent = 'Sélectionnez puis copiez'; }
+    });
+    loadCatalogue();
+  </script>
+</body>
+</html>
