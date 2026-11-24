@@ -128,5 +128,17 @@
     "description": "Bande originale du dessin animé La Reine des Neiges, en français. Attention les enfants peuvent chanter à tue-tête",
     "link": "https://drive.proton.me/urls/Q2K7YH3A98#tWl9JdhrPd5K",
     "provider": "Proton"
+  },
+  {
+    "title": "Contes musicaux",
+    "author": "Léa",
+    "age": "5-8ans",
+    "themes": [
+      "Musique classique",
+      "contes"
+    ],
+    "description": "Le carnaval des animaux et Pierre et le loup. Une histoire de 30 minutes chacun, pas divisée en chapitre.",
+    "link": "https://drive.proton.me/urls/8AJF45ABHC#vCvxcC59mu3O",
+    "provider": "Proton"
   }
 ]
