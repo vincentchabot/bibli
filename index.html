@@ -22,15 +22,22 @@
     button:hover,.button:hover { background:var(--accent-dark); }
     .button.secondary { color:var(--accent-dark); background:var(--soft); }
     .count { color:var(--muted); font-size:.9rem; margin:10px 0 14px; }
-    .grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
-    .pack { background:var(--card); border:1px solid var(--line); border-radius:15px; padding:18px; display:flex; flex-direction:column; min-height:210px; box-shadow:0 2px 8px #23304a08; }
-    .pack-top { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
-    .pack h2 { margin:0 0 5px; font-size:1.15rem; line-height:1.3; }
-    .meta { color:var(--muted); font-size:.88rem; }
-    .description { color:#46526a; margin:13px 0; white-space:pre-wrap; }
-    .tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:auto; padding:4px 0 15px; }
-    .tag { font-size:.78rem; color:#46538e; background:var(--soft); border-radius:99px; padding:4px 9px; }
-    .download { align-self:flex-start; margin-top:4px; }
+    /* Bibliothèque compacte : 3 colonnes sur grand écran */
+    .grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+    .pack { background:var(--card); border:1px solid var(--line); border-radius:11px; padding:12px 14px; display:flex; flex-direction:column; min-height:0; box-shadow:0 2px 8px #23304a08; }
+    .pack-head { display:flex; align-items:center; gap:8px; justify-content:space-between; }
+    .pack h2 { margin:0; font-size:1rem; line-height:1.3; min-width:0; overflow-wrap:anywhere; }
+    .pack h2 a { color:var(--accent-dark); text-decoration:none; }
+    .pack h2 a:hover { text-decoration:underline; }
+    .pack h2 a:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-radius:3px; }
+    .info-toggle { flex:0 0 auto; border-radius:8px; padding:5px 9px; color:var(--accent-dark); background:var(--soft); font-size:.82rem; line-height:1.2; }
+    .info-toggle:hover { background:#dfe5fb; }
+    .pack-info { border-top:1px solid var(--line); margin-top:9px; padding-top:8px; }
+    .pack-info[hidden] { display:none; }
+    .meta { color:var(--muted); font-size:.78rem; }
+    .description { color:#46526a; margin:7px 0 2px; font-size:.88rem; white-space:pre-wrap; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; }
+    .tags { display:flex; flex-wrap:wrap; gap:5px; margin-top:8px; }
+    .tag { font-size:.7rem; color:#46538e; background:var(--soft); border-radius:99px; padding:2px 7px; }
     .empty { background:#fff; border:1px dashed #cbd2e2; border-radius:14px; padding:30px 20px; text-align:center; color:var(--muted); grid-column:1/-1; }
     .howto { margin-top:24px; color:var(--muted); font-size:.9rem; }
     details.add { margin-top:28px; background:#fff; border:1px solid var(--line); border-radius:14px; padding:16px 18px; }
@@ -44,8 +51,9 @@
     #result textarea { min-height:125px; font: .83rem/1.45 ui-monospace,SFMono-Regular,Consolas,monospace; }
     .notice { padding:12px 14px; border-radius:10px; background:#fff8e8; color:#76551a; font-size:.88rem; margin-top:14px; }
     footer { border-top:1px solid var(--line); padding:18px 0 28px; color:var(--muted); font-size:.82rem; }
-    @media (max-width:760px) { .toolbar { grid-template-columns:1fr 1fr; } .toolbar input { grid-column:1/-1; } .grid { grid-template-columns:1fr; } }
-    @media (max-width:480px) { .toolbar,.form-grid { grid-template-columns:1fr; } .field.full { grid-column:auto; } header { padding-top:28px; } }
+    @media (max-width:900px) { .grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .toolbar { grid-template-columns:minmax(180px,1fr) 150px 150px auto; } }
+    @media (max-width:760px) { .toolbar { grid-template-columns:1fr 1fr; } .toolbar input { grid-column:1/-1; } }
+    @media (max-width:520px) { .grid { grid-template-columns:1fr; } .toolbar,.form-grid { grid-template-columns:1fr; } .field.full { grid-column:auto; } header { padding-top:28px; } }
   </style>
 </head>
 <body>
@@ -53,7 +61,7 @@
     <div class="wrap">
       <div class="eyebrow">Bibliothèque collective</div>
       <h1>📚 Les histoires de la bande</h1>
-      <p class="intro">Un catalogue partagé de packs à télécharger. Choisissez un pack, ouvrez son lien Proton Drive et récupérez le fichier.</p>
+      <p class="intro">Un catalogue partagé de packs à télécharger. Cliquez sur le titre d’une histoire pour ouvrir son lien Proton Drive et récupérer le pack.</p>
     </div>
   </header>
 
@@ -136,18 +144,22 @@
       visible.forEach(pack => {
         const card = document.createElement('article');
         card.className = 'pack';
-        const top = document.createElement('div'); top.className = 'pack-top';
-        const heading = document.createElement('div');
-        const title = document.createElement('h2'); title.textContent = pack.title;
+        const head = document.createElement('div'); head.className = 'pack-head';
+        const title = document.createElement('h2');
+        const titleLink = document.createElement('a'); titleLink.textContent = pack.title; titleLink.href = pack.link; titleLink.target = '_blank'; titleLink.rel = 'noopener noreferrer'; titleLink.title = `Ouvrir « ${pack.title} » sur Proton`;
+        title.appendChild(titleLink);
+        const toggle = document.createElement('button'); toggle.type = 'button'; toggle.className = 'info-toggle'; toggle.textContent = '＋'; toggle.setAttribute('aria-expanded', 'false'); toggle.setAttribute('aria-label', `Afficher les informations de ${pack.title}`);
+        head.append(title, toggle); card.appendChild(head);
+        const info = document.createElement('div'); info.className = 'pack-info'; info.hidden = true;
         const meta = document.createElement('div'); meta.className = 'meta';
-        meta.textContent = [pack.author ? `Par ${pack.author}` : '', pack.age || ''].filter(Boolean).join(' · ');
-        heading.append(title, meta); top.appendChild(heading); card.appendChild(top);
-        if (pack.description) { const desc = document.createElement('p'); desc.className = 'description'; desc.textContent = pack.description; card.appendChild(desc); }
+        meta.textContent = [pack.author ? `Par ${pack.author}` : '', pack.age ? `Âge : ${pack.age}` : ''].filter(Boolean).join(' · ');
+        if (meta.textContent) info.appendChild(meta);
+        if (pack.description) { const desc = document.createElement('p'); desc.className = 'description'; desc.style.display = 'block'; desc.style.webkitLineClamp = 'unset'; desc.style.overflow = 'visible'; desc.textContent = pack.description; info.appendChild(desc); }
         const tags = document.createElement('div'); tags.className = 'tags';
         (pack.themes || []).forEach(themeName => { const tag = document.createElement('span'); tag.className = 'tag'; tag.textContent = themeName; tags.appendChild(tag); });
-        card.appendChild(tags);
-        const link = document.createElement('a'); link.className = 'button download'; link.href = pack.link; link.target = '_blank'; link.rel = 'noopener noreferrer'; link.textContent = 'Ouvrir le pack sur Proton ↗';
-        card.appendChild(link);
+        if ((pack.themes || []).length) info.appendChild(tags);
+        toggle.addEventListener('click', () => { const open = !info.hidden; info.hidden = open; toggle.textContent = open ? '＋' : '−'; toggle.setAttribute('aria-expanded', String(!open)); toggle.setAttribute('aria-label', `${open ? 'Afficher' : 'Masquer'} les informations de ${pack.title}`); });
+        card.appendChild(info);
         catalogueElement.appendChild(card);
       });
     }
