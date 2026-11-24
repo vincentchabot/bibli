@@ -48,7 +48,6 @@
     .hint { color:var(--muted); font-size:.82rem; margin:5px 0 0; }
     .form-actions { display:flex; gap:9px; flex-wrap:wrap; margin-top:14px; }
     #result { margin-top:14px; }
-    #result textarea { min-height:125px; font: .83rem/1.45 ui-monospace,SFMono-Regular,Consolas,monospace; }
     .notice { padding:12px 14px; border-radius:10px; background:#fff8e8; color:#76551a; font-size:.88rem; margin-top:14px; }
     footer { border-top:1px solid var(--line); padding:18px 0 28px; color:var(--muted); font-size:.82rem; }
     @media (max-width:900px) { .grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .toolbar { grid-template-columns:minmax(180px,1fr) 150px 150px auto; } }
@@ -61,7 +60,7 @@
     <div class="wrap">
       <div class="eyebrow">Bibliothèque collective</div>
       <h1>📚 Les histoires de la bande</h1>
-      <p class="intro">Un catalogue partagé de packs à télécharger. Cliquez sur le titre d’une histoire pour ouvrir son lien Proton Drive et récupérer le pack.</p>
+      <p class="intro">Un catalogue partagé de packs à télécharger. Cliquez sur le titre d’une histoire pour ouvrir son lien de téléchargement et récupérer le pack.</p>
     </div>
   </header>
 
@@ -75,11 +74,11 @@
     <p class="count" id="count">Chargement du catalogue…</p>
     <section class="grid" id="catalogue" aria-live="polite"></section>
 
-    <p class="howto">Pour ajouter un pack : déposez le fichier dans le dossier partagé Proton Drive, créez un lien de partage en lecture, puis transmettez le lien et les informations du pack à la personne qui met à jour le catalogue.</p>
+    <p class="howto">Pour proposer un pack : déposez-le sur un service de stockage (Proton Drive, Google Drive, Dropbox, OneDrive…), créez un lien de partage accessible en lecture, puis renseignez-le dans le formulaire ci-dessous.</p>
 
     <details class="add">
-      <summary>＋ Préparer une fiche pour proposer un pack</summary>
-      <p class="hint">Ce formulaire prépare une fiche à copier et à envoyer à la personne qui gère le catalogue. Il ne publie rien automatiquement.</p>
+      <summary>＋ Ajouter une histoire au catalogue</summary>
+      <p class="hint">Le formulaire publie directement la fiche dans le catalogue après vérification du mot de passe administrateur.</p>
       <form id="pack-form">
         <div class="form-grid">
           <div class="field"><label for="title">Titre du pack *</label><input id="title" required maxlength="100" placeholder="Ex. Les aventures de…"></div>
@@ -87,20 +86,17 @@
           <div class="field"><label for="age-input">Âge conseillé</label><input id="age-input" maxlength="30" placeholder="Ex. 5–8 ans"></div>
           <div class="field"><label for="themes">Thèmes</label><input id="themes" maxlength="120" placeholder="Ex. aventure, animaux, espace"></div>
           <div class="field full"><label for="description">Description</label><textarea id="description" rows="3" maxlength="400" placeholder="Quelques mots sur les histoires du pack…"></textarea></div>
-          <div class="field full"><label for="link">Lien de téléchargement Proton *</label><input id="link" type="url" required placeholder="https://drive.proton.me/…"></div>
+          <div class="field full"><label for="link">Lien de téléchargement *</label><input id="link" type="url" required placeholder="https://…"><p class="hint">Le lien doit être en HTTPS et accessible aux personnes avec qui vous le partagez.</p></div>
         </div>
-        <div class="form-actions"><button type="submit">Préparer la fiche</button></div>
+        <div class="field full"><label for="password">Mot de passe administrateur *</label><input id="password" type="password" required autocomplete="current-password" placeholder="Mot de passe de publication"></div>
+        <div class="form-actions"><button type="submit" id="submit-pack">Publier le pack</button></div>
       </form>
-      <div id="result" hidden>
-        <p><strong>Fiche à transmettre :</strong></p>
-        <textarea id="json-output" readonly aria-label="Fiche au format JSON"></textarea>
-        <div class="form-actions"><button type="button" id="copy">Copier la fiche</button></div>
-      </div>
+      <div id="result" role="status" aria-live="polite"></div>
     </details>
-    <div class="notice"><strong>À savoir :</strong> le site GitHub Pages est public. N'y placez pas d'informations personnelles. Toute personne ayant accès au catalogue pourra voir les liens Proton qui y sont publiés. Vous pouvez protéger les liens Proton par mot de passe et partager ce mot de passe séparément avec vos amis.</div>
+    <div class="notice"><strong>À savoir :</strong> le site GitHub Pages est public. N'y placez pas d'informations personnelles. Toute personne ayant accès au catalogue pourra voir les liens de téléchargement qui y sont publiés. Vous pouvez protéger les liens Proton par mot de passe et partager ce mot de passe séparément avec vos amis.</div>
   </main>
 
-  <footer><div class="wrap">Bibliothèque d'histoires entre amis · Les fichiers sont hébergés séparément sur Proton Drive.</div></footer>
+  <footer><div class="wrap">Bibliothèque d'histoires entre amis · Les fichiers sont hébergés séparément sur le service de stockage choisi par la personne qui propose le pack.</div></footer>
 
   <script>
     const catalogueElement = document.getElementById('catalogue');
@@ -146,7 +142,7 @@
         card.className = 'pack';
         const head = document.createElement('div'); head.className = 'pack-head';
         const title = document.createElement('h2');
-        const titleLink = document.createElement('a'); titleLink.textContent = pack.title; titleLink.href = pack.link; titleLink.target = '_blank'; titleLink.rel = 'noopener noreferrer'; titleLink.title = `Ouvrir « ${pack.title} » sur Proton`;
+        const titleLink = document.createElement('a'); titleLink.textContent = pack.title; titleLink.href = pack.link; titleLink.target = '_blank'; titleLink.rel = 'noopener noreferrer'; titleLink.title = `Ouvrir « ${pack.title} »`;
         title.appendChild(titleLink);
         const toggle = document.createElement('button'); toggle.type = 'button'; toggle.className = 'info-toggle'; toggle.textContent = '＋'; toggle.setAttribute('aria-expanded', 'false'); toggle.setAttribute('aria-label', `Afficher les informations de ${pack.title}`);
         head.append(title, toggle); card.appendChild(head);
@@ -251,25 +247,55 @@
     themeSelect.addEventListener('change', render);
     document.getElementById('reset').addEventListener('click', () => { searchInput.value=''; ageSelect.value=''; themeSelect.value=''; render(); });
 
-    document.getElementById('pack-form').addEventListener('submit', event => {
+    const WORKER_URL = 'https://bibli-ajout-histoire.vincent2chabot.workers.dev/';
+
+    document.getElementById('pack-form').addEventListener('submit', async event => {
       event.preventDefault();
-      const themes = document.getElementById('themes').value.split(',').map(s => s.trim()).filter(Boolean);
+
+      const button = document.getElementById('submit-pack');
+      const result = document.getElementById('result');
+      const themes = document.getElementById('themes').value
+        .split(',').map(s => s.trim()).filter(Boolean);
+
       const entry = {
         title: document.getElementById('title').value.trim(),
         author: document.getElementById('author').value.trim(),
         age: document.getElementById('age-input').value.trim(),
         themes,
         description: document.getElementById('description').value.trim(),
-        link: document.getElementById('link').value.trim()
+        link: document.getElementById('link').value.trim(),
+        password: document.getElementById('password').value
       };
-      document.getElementById('json-output').value = JSON.stringify(entry, null, 2);
-      document.getElementById('result').hidden = false;
+
+      result.className = 'hint';
+      result.textContent = 'Publication en cours…';
+      button.disabled = true;
+      button.textContent = 'Publication…';
+
+      try {
+        const response = await fetch(WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(entry)
+        });
+
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(data.error || `Erreur lors de la publication (HTTP ${response.status}).`);
+        }
+
+        result.className = 'notice';
+        result.textContent = `✓ ${data.message || 'Pack ajouté au catalogue.'} Service détecté : ${data.provider || 'Autre'}. La mise à jour du site peut prendre quelques instants.`;
+        document.getElementById('pack-form').reset();
+      } catch (error) {
+        result.className = 'notice';
+        result.textContent = `Échec de la publication : ${error.message} Vérifiez le mot de passe et le lien, puis réessayez.`;
+      } finally {
+        button.disabled = false;
+        button.textContent = 'Publier le pack';
+      }
     });
-    document.getElementById('copy').addEventListener('click', async () => {
-      const output = document.getElementById('json-output');
-      try { await navigator.clipboard.writeText(output.value); document.getElementById('copy').textContent = 'Copié !'; }
-      catch { output.focus(); output.select(); document.getElementById('copy').textContent = 'Sélectionnez puis copiez'; }
-    });
+
     loadCatalogue();
   </script>
 </body>
