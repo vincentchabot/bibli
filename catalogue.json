@@ -2,8 +2,8 @@
   "title": "L'ile au blabla",
   "author": "Vincent",
   "age": "3",
-  "themes": [],
-  "description": "Podcast arte",
+  "themes": ["arte"],
+  "description": "",
   "link": "https://drive.proton.me/urls/BT5G1QZZFR#jxQOLaOIAZWC"
 },
   {
@@ -39,5 +39,18 @@
   ],
   "description": "",
   "link": "https://drive.proton.me/urls/764ZJ18SKR#M8Jkd9HGu7O2"
+},
+  
+{
+  "title": "Wish en français",
+  "author": "Léa",
+  "age": "3-8 ans",
+  "themes": [
+    "BO",
+    "chansons",
+    "disney"
+  ],
+  "description": "Bande originale du dessin animé Wish, en français. Attention ça peut rester en tête",
+  "link": "https://drive.proton.me/urls/Y673A6T37M#GZbZXIPLYGyp"
 }
 ]
