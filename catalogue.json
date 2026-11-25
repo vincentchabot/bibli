@@ -262,5 +262,18 @@
     "description": "Les aventuriers des 6 royaumes\n12 histoires à la recherche de mystères et trésors cachés, (avec des pharaon, sphynx, migration, troll, fourmi, ....)",
     "link": "https://drive.proton.me/urls/P9D6EMTRCM#D9mv9puNFl6X",
     "provider": "Proton"
+  },
+  {
+    "title": "La famille magicus",
+    "author": "Léa",
+    "age": "7",
+    "themes": [
+      "imaginaire",
+      "famille",
+      "magie"
+    ],
+    "description": "16 histoires d'une famille de sorcier. Avec mamie Médusa, papy Helmut, Honoré, Hortense, Agatha et Félix, sans oublier la grenouille Carabistouille",
+    "link": "https://drive.proton.me/urls/VAQG2MR4B8#4LQiajqHrfM7",
+    "provider": "Proton"
   }
 ]
