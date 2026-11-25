@@ -275,5 +275,18 @@
     "description": "16 histoires d'une famille de sorcier. Avec mamie Médusa, papy Helmut, Honoré, Hortense, Agatha et Félix, sans oublier la grenouille Carabistouille",
     "link": "https://drive.proton.me/urls/VAQG2MR4B8#4LQiajqHrfM7",
     "provider": "Proton"
+  },
+  {
+    "title": "L'appel d'Aquaria",
+    "author": "Léa",
+    "age": "5",
+    "themes": [
+      "aventure",
+      "imaginaire",
+      "amis"
+    ],
+    "description": "Les aventuriers des 6 royaumes\n12 histoires dans lesquelles il est question de construire une cité écoresponsable (avec l'océan, le kraken, baleine, volcan, parc aquatique, ...)",
+    "link": "https://drive.proton.me/urls/ZKN6SYJV58#rqQ9CfGjHaWC",
+    "provider": "Proton"
   }
 ]
