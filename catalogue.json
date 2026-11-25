@@ -288,5 +288,18 @@
     "description": "Les aventuriers des 6 royaumes\n12 histoires dans lesquelles il est question de construire une cité écoresponsable (avec l'océan, le kraken, baleine, volcan, parc aquatique, ...)",
     "link": "https://drive.proton.me/urls/ZKN6SYJV58#rqQ9CfGjHaWC",
     "provider": "Proton"
+  },
+  {
+    "title": "Les aventures de LEO",
+    "author": "Léa",
+    "age": "5",
+    "themes": [
+      "aventure",
+      "imaginaire",
+      "amis"
+    ],
+    "description": "Les aventuriers des 6 royaumes\n12 histoires avec des volcans, pirate, dragon, hiver, eskimo, ...",
+    "link": "https://drive.proton.me/urls/5AN02SXND4#VYAXqCuMJYso",
+    "provider": "Proton"
   }
 ]
