@@ -236,5 +236,18 @@
     "description": "Les aventuriers des 6 royaumes\n12 histoires autour de la nature qui se révolte (Tempêtes, pollutions, fonte des glaces, attaques de dragons, ...)",
     "link": "https://drive.proton.me/urls/4W0QV1TNA8#IRwD64vxZpCe",
     "provider": "Proton"
+  },
+  {
+    "title": "Les aventures de ZOE",
+    "author": "Léa",
+    "age": "5",
+    "themes": [
+      "aventure",
+      "imaginaire",
+      "amis"
+    ],
+    "description": "Les aventuriers des 6 royaumes\n12 histoires (sirène, dinosaures, kraken, robot, dragon, école, océan, ...)",
+    "link": "https://drive.proton.me/urls/Q8PSPAZAZG#EV4Wt31TYIWf",
+    "provider": "Proton"
   }
 ]
