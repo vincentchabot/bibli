@@ -249,5 +249,18 @@
     "description": "Les aventuriers des 6 royaumes\n12 histoires (sirène, dinosaures, kraken, robot, dragon, école, océan, ...)",
     "link": "https://drive.proton.me/urls/Q8PSPAZAZG#EV4Wt31TYIWf",
     "provider": "Proton"
+  },
+  {
+    "title": "Les aventures de TOM",
+    "author": "Léa",
+    "age": "5",
+    "themes": [
+      "aventure",
+      "imaginaire",
+      "amis"
+    ],
+    "description": "Les aventuriers des 6 royaumes\n12 histoires à la recherche de mystères et trésors cachés, (avec des pharaon, sphynx, migration, troll, fourmi, ....)",
+    "link": "https://drive.proton.me/urls/P9D6EMTRCM#D9mv9puNFl6X",
+    "provider": "Proton"
   }
 ]
